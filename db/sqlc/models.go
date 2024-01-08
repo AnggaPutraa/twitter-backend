@@ -7,45 +7,47 @@ package db
 import (
 	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Comment struct {
-	ID              int64         `json:"id"`
+	ID              uuid.UUID     `json:"id"`
 	Body            string        `json:"body"`
 	CreatedAt       time.Time     `json:"created_at"`
 	UpdatedAt       sql.NullTime  `json:"updated_at"`
-	UserID          int64         `json:"user_id"`
-	PostID          int64         `json:"post_id"`
-	ParentCommentID sql.NullInt64 `json:"parent_comment_id"`
+	UserID          uuid.UUID     `json:"user_id"`
+	PostID          uuid.UUID     `json:"post_id"`
+	ParentCommentID uuid.NullUUID `json:"parent_comment_id"`
 }
 
 type Follower struct {
-	FollowerID int64 `json:"follower_id"`
-	FollowesID int64 `json:"followes_id"`
+	FollowerID uuid.UUID `json:"follower_id"`
+	FollowesID uuid.UUID `json:"followes_id"`
 }
 
 type Notification struct {
-	ID        int64     `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	Body      string    `json:"body"`
 	CreatedAt time.Time `json:"created_at"`
-	UserID    int64     `json:"user_id"`
+	UserID    uuid.UUID `json:"user_id"`
 }
 
 type Post struct {
-	ID        int64        `json:"id"`
+	ID        uuid.UUID    `json:"id"`
 	Body      string       `json:"body"`
 	CreatedAt time.Time    `json:"created_at"`
 	UpdatedAt sql.NullTime `json:"updated_at"`
-	UserID    int64        `json:"user_id"`
+	UserID    uuid.UUID    `json:"user_id"`
 }
 
 type PostLike struct {
-	UserID int64 `json:"user_id"`
-	PostID int64 `json:"post_id"`
+	UserID uuid.UUID `json:"user_id"`
+	PostID uuid.UUID `json:"post_id"`
 }
 
 type User struct {
-	ID                 int64          `json:"id"`
+	ID                 uuid.UUID      `json:"id"`
 	Name               string         `json:"name"`
 	Username           string         `json:"username"`
 	Email              string         `json:"email"`

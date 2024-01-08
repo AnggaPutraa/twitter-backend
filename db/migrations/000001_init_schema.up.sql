@@ -1,5 +1,5 @@
 CREATE TABLE "users" (
-  "id" bigserial PRIMARY KEY,
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "name" varchar NOT NULL,
   "username" varchar UNIQUE NOT NULL,
   "email" varchar UNIQUE NOT NULL,
@@ -11,39 +11,39 @@ CREATE TABLE "users" (
 );
 
 CREATE TABLE "posts" (
-  "id" bigserial PRIMARY KEY,
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "body" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz,
-  "user_id" bigint NOT NULL
+  "user_id" uuid NOT NULL
 );
 
 CREATE TABLE "comments" (
-  "id" bigserial PRIMARY KEY,
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "body" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz,
-  "user_id" bigint NOT NULL,
-  "post_id" bigint NOT NULL,
-  "parent_comment_id" bigint
+  "user_id" uuid NOT NULL,
+  "post_id" uuid NOT NULL,
+  "parent_comment_id" uuid
 );
 
 CREATE TABLE "notifications" (
-  "id" bigserial PRIMARY KEY,
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "body" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "user_id" bigint NOT NULL
+  "user_id" uuid NOT NULL
 );
 
 CREATE TABLE "post_likes" (
-  "user_id" bigint NOT NULL,
-  "post_id" bigint NOT NULL,
+  "user_id" uuid NOT NULL,
+  "post_id" uuid NOT NULL,
   PRIMARY KEY ("user_id", "post_id")
 );
 
 CREATE TABLE "followers" (
-  "follower_id" bigint NOT NULL,
-  "followes_id" bigint NOT NULL,
+  "follower_id" uuid NOT NULL,
+  "followes_id" uuid NOT NULL,
   PRIMARY KEY ("follower_id", "followes_id")
 );
 

@@ -14,3 +14,15 @@ INSERT INTO users (
   $5,
   $6
 ) RETURNING *;
+
+-- name: GetUser :one
+SELECT 
+  id, 
+  name, 
+  username, 
+  email, 
+  bio, 
+  created_at, 
+  updated_at
+FROM users
+WHERE id = $1;
