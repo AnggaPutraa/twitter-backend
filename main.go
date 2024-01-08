@@ -1,18 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"log"
-
+	"github.com/AnggaPutraa/twitter-backend/api"
 	"github.com/AnggaPutraa/twitter-backend/configs"
+	db "github.com/AnggaPutraa/twitter-backend/db/sqlc"
 )
 
 func main() {
-	configuration, err := configs.LoadConfig()
-
-	if err != nil {
-		log.Fatal("Can't read the env configuration")
-	}
-
-	fmt.Println(configuration.DBUrl)
+	configuration := configs.LoadConfig()
+	database := configs.OpenConnection(configuration.DBUrl)
+	query := db.New(database)
+	api.RunServer(configuration, query)
 }
