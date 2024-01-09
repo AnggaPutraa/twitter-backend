@@ -15,14 +15,18 @@ INSERT INTO users (
   $6
 ) RETURNING *;
 
--- name: GetUser :one
-SELECT 
-  id, 
-  name, 
-  username, 
-  email, 
-  bio, 
-  created_at, 
-  updated_at
+-- name: GetUserById :one
+SELECT *
 FROM users
 WHERE id = $1;
+
+-- name: GetUserByEmail :one
+SELECT *
+FROM users
+WHERE email = $1;
+
+-- name: UpdateHashedRefreshToken :one
+UPDATE users
+SET hashed_refresh_token =  sqlc.arg(hashed_refresh_token)
+WHERE id = sqlc.arg(id)
+RETURNING *;

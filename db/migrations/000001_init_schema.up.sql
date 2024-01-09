@@ -5,7 +5,6 @@ CREATE TABLE "users" (
   "email" varchar UNIQUE NOT NULL,
   "hashed_password" varchar NOT NULL,
   "bio" varchar,
-  "hashed_refresh_token" varchar,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz
 );
