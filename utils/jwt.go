@@ -54,14 +54,14 @@ func (strategy *JWTStrategy) GenerateToken(userId uuid.UUID, email string) (stri
 		"sub":        userId,
 		"email":      email,
 		"issued_at":  time.Now(),
-		"expired_at": time.Now().Add(15 * time.Minute).Unix(),
+		"expired_at": time.Now().Add(15 * time.Minute),
 	}
 
 	refreshTokenClaims := jwt.MapClaims{
 		"sub":        userId,
 		"email":      email,
 		"issued_at":  time.Now(),
-		"expired_at": time.Now().Add(7 * 24 * time.Hour).Unix(),
+		"expired_at": time.Now().Add(7 * 24 * time.Hour),
 	}
 
 	accessToken, err := jwt.NewWithClaims(
@@ -90,7 +90,6 @@ func (strategy *JWTStrategy) VerifyToken(token, tokenType string) (*JWTClaims, e
 	}
 	keyFunc := func(jwtToken *jwt.Token) (interface{}, error) {
 		_, ok := jwtToken.Method.(*jwt.SigningMethodHMAC)
-
 		if !ok {
 			return nil, ErrInvalidToken
 		}

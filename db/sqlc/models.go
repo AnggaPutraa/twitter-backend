@@ -15,7 +15,7 @@ type Comment struct {
 	ID              uuid.UUID     `json:"id"`
 	Body            string        `json:"body"`
 	CreatedAt       time.Time     `json:"created_at"`
-	UpdatedAt       sql.NullTime  `json:"updated_at"`
+	UpdatedAt       time.Time     `json:"updated_at"`
 	UserID          uuid.UUID     `json:"user_id"`
 	PostID          uuid.UUID     `json:"post_id"`
 	ParentCommentID uuid.NullUUID `json:"parent_comment_id"`
@@ -34,11 +34,11 @@ type Notification struct {
 }
 
 type Post struct {
-	ID        uuid.UUID    `json:"id"`
-	Body      string       `json:"body"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
-	UserID    uuid.UUID    `json:"user_id"`
+	ID        uuid.UUID `json:"id"`
+	Body      string    `json:"body"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	UserID    uuid.UUID `json:"user_id"`
 }
 
 type PostLike struct {
@@ -54,5 +54,5 @@ type User struct {
 	HashedPassword string         `json:"hashed_password"`
 	Bio            sql.NullString `json:"bio"`
 	CreatedAt      time.Time      `json:"created_at"`
-	UpdatedAt      sql.NullTime   `json:"updated_at"`
+	UpdatedAt      time.Time      `json:"updated_at"`
 }

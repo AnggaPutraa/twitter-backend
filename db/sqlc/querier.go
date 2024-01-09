@@ -11,9 +11,11 @@ import (
 )
 
 type Querier interface {
+	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserById(ctx context.Context, id uuid.UUID) (User, error)
+	UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error)
 }
 
 var _ Querier = (*Queries)(nil)

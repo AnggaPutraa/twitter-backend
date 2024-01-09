@@ -38,7 +38,6 @@ func authMiddleware(stategy utils.Strategy) gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
 			return
 		}
-
 		accessToken := fields[1]
 		payload, err := stategy.VerifyToken(accessToken, utils.AccessTokenType)
 		if err != nil {
