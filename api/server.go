@@ -49,6 +49,10 @@ func (server *Server) setupRouter() {
 		postRoute := authenticatedRoute.Group("/post")
 		postRoute.POST("/", server.createPost)
 		postRoute.PUT("/:id", server.updatePost)
+		commentRoute := authenticatedRoute.Group("/comment")
+		commentRoute.POST("/", server.createComment)
+		commentRoute.PUT("/:id", server.updateComment)
+		commentRoute.POST("/reply", server.createReplyComment)
 	}
 
 	server.router = router
