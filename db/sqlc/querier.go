@@ -14,7 +14,6 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserById(ctx context.Context, id uuid.UUID) (User, error)
-	UpdateHashedRefreshToken(ctx context.Context, arg UpdateHashedRefreshTokenParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)

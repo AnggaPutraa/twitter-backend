@@ -47,13 +47,12 @@ type PostLike struct {
 }
 
 type User struct {
-	ID                 uuid.UUID      `json:"id"`
-	Name               string         `json:"name"`
-	Username           string         `json:"username"`
-	Email              string         `json:"email"`
-	HashedPassword     string         `json:"hashed_password"`
-	Bio                sql.NullString `json:"bio"`
-	HashedRefreshToken sql.NullString `json:"hashed_refresh_token"`
-	CreatedAt          time.Time      `json:"created_at"`
-	UpdatedAt          sql.NullTime   `json:"updated_at"`
+	ID             uuid.UUID      `json:"id"`
+	Name           string         `json:"name"`
+	Username       string         `json:"username"`
+	Email          string         `json:"email"`
+	HashedPassword string         `json:"hashed_password"`
+	Bio            sql.NullString `json:"bio"`
+	CreatedAt      time.Time      `json:"created_at"`
+	UpdatedAt      sql.NullTime   `json:"updated_at"`
 }

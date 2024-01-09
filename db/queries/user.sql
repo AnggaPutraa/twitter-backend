@@ -4,15 +4,13 @@ INSERT INTO users (
   username,
   email,
   hashed_password,
-  bio,
-  hashed_refresh_token
+  bio
 ) VALUES (
   $1,
   $2,
   $3,
   $4,
-  $5,
-  $6
+  $5
 ) RETURNING *;
 
 -- name: GetUserById :one
@@ -24,9 +22,3 @@ WHERE id = $1;
 SELECT *
 FROM users
 WHERE email = $1;
-
--- name: UpdateHashedRefreshToken :one
-UPDATE users
-SET hashed_refresh_token =  sqlc.arg(hashed_refresh_token)
-WHERE id = sqlc.arg(id)
-RETURNING *;
