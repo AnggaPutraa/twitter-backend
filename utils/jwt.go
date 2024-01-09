@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 )
 
 const (
@@ -18,7 +19,7 @@ var (
 )
 
 type JWTClaims struct {
-	Sub       string    `json:"sub"`
+	Sub       uuid.UUID `json:"sub"`
 	Email     string    `json:"email"`
 	IssuedAt  time.Time `json:"issued_at"`
 	ExpiredAt time.Time `json:"expired_at"`
@@ -32,7 +33,7 @@ func (c *JWTClaims) Valid() error {
 }
 
 type Strategy interface {
-	GenerateToken(userId, email string) (string, string, error)
+	GenerateToken(userId uuid.UUID, email string) (string, string, error)
 	VerifyToken(token, tokenType string) (*JWTClaims, error)
 }
 
@@ -48,7 +49,7 @@ func NewJWTStrategy(accessTokenSecret, refreshTokenSecret string) Strategy {
 	}
 }
 
-func (strategy *JWTStrategy) GenerateToken(userId, email string) (string, string, error) {
+func (strategy *JWTStrategy) GenerateToken(userId uuid.UUID, email string) (string, string, error) {
 	accessTokenClaims := jwt.MapClaims{
 		"sub":        userId,
 		"email":      email,

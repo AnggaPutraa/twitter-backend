@@ -27,12 +27,11 @@ func LoadConfig() (config Config) {
 	if err = viper.Unmarshal(&config); err != nil {
 		log.Fatal("Can't load environment variable: ", err)
 	}
-	config.DBUrl = fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+	config.DBUrl = fmt.Sprintf("postgres://%s:%s@%s:%d?sslmode=disable",
 		config.DBUsername,
 		config.DBPassword,
 		config.DBHost,
 		config.DBPort,
-		config.DBDatabase,
 	)
 	return config
 }
