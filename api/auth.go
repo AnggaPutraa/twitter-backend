@@ -2,7 +2,10 @@ package api
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 	"net/http"
+	"strings"
 
 	db "github.com/AnggaPutraa/twitter-backend/db/sqlc"
 	"github.com/AnggaPutraa/twitter-backend/dto"
@@ -72,6 +75,43 @@ func (server *Server) login(ctx *gin.Context) {
 	}
 
 	accessToken, refreshToken, err := server.strategy.GenerateToken(user.ID, user.Email)
+	var response = &dto.LoginResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (server *Server) refresh(ctx *gin.Context) {
+	authorizationHeader := ctx.GetHeader(authorizationHeaderKey)
+	if len(authorizationHeader) == 0 {
+		err := errors.New("Authorization header is not provided")
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
+		return
+	}
+
+	fields := strings.Fields(authorizationHeader)
+	if len(fields) < 2 {
+		err := errors.New("Authorization header is not provided")
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
+		return
+	}
+
+	authorizationType := strings.ToLower(fields[0])
+	if authorizationType != authorizationTypeBearer {
+		err := fmt.Errorf("unsupported authorization type %s", authorizationType)
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
+		return
+	}
+	refreshToken := fields[1]
+	payload, err := server.strategy.VerifyToken(refreshToken, utils.RefreshTokenType)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
+		return
+	}
+
+	accessToken, refreshToken, err := server.strategy.GenerateToken(payload.Sub, payload.Email)
 	var response = &dto.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,

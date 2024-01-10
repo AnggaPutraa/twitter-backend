@@ -41,6 +41,7 @@ func (server *Server) setupRouter() {
 	authRoute := apiGroup.Group("/auth")
 	authRoute.POST("/register", server.register)
 	authRoute.POST("/login", server.login)
+	authRoute.POST("/refresh", server.refresh)
 
 	apiGroup.GET("/post", server.getAllPost)
 	apiGroup.GET("/post/:id", server.getPostById)
