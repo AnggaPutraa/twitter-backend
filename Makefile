@@ -1,5 +1,8 @@
 include .env
 
+install:
+	go mod tidy
+
 db-up:
 	docker-compose up -d
 
@@ -15,4 +18,4 @@ migrate-down:
 sqlc:
 	sqlc generate
 
-.PHONY: db-up db-down migrate-up migrate-down sqlc
+.PHONY: install db-up db-down migrate-up migrate-down sqlc
