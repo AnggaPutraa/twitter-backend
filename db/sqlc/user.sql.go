@@ -58,6 +58,43 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const createUserFollowing = `-- name: CreateUserFollowing :one
+INSERT INTO followers (
+  follower_id, 
+  followes_id
+) VALUES (
+  $1, 
+  $2
+) RETURNING follower_id, followes_id
+`
+
+type CreateUserFollowingParams struct {
+	FollowerID uuid.UUID `json:"follower_id"`
+	FollowesID uuid.UUID `json:"followes_id"`
+}
+
+func (q *Queries) CreateUserFollowing(ctx context.Context, arg CreateUserFollowingParams) (Follower, error) {
+	row := q.db.QueryRowContext(ctx, createUserFollowing, arg.FollowerID, arg.FollowesID)
+	var i Follower
+	err := row.Scan(&i.FollowerID, &i.FollowesID)
+	return i, err
+}
+
+const deleteUserFollowing = `-- name: DeleteUserFollowing :exec
+DELETE FROM followers
+WHERE follower_id = $1 AND followes_id = $2
+`
+
+type DeleteUserFollowingParams struct {
+	FollowerID uuid.UUID `json:"follower_id"`
+	FollowesID uuid.UUID `json:"followes_id"`
+}
+
+func (q *Queries) DeleteUserFollowing(ctx context.Context, arg DeleteUserFollowingParams) error {
+	_, err := q.db.ExecContext(ctx, deleteUserFollowing, arg.FollowerID, arg.FollowesID)
+	return err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT id, name, username, email, hashed_password, bio, created_at, updated_at
 FROM users
@@ -100,4 +137,82 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const getUserFollowers = `-- name: GetUserFollowers :many
+SELECT 
+  u.id,
+  u.username,
+  u.email
+FROM users u
+JOIN followers f ON u.id = f.follower_id
+WHERE f.followes_id = $1
+`
+
+type GetUserFollowersRow struct {
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+	Email    string    `json:"email"`
+}
+
+func (q *Queries) GetUserFollowers(ctx context.Context, followesID uuid.UUID) ([]GetUserFollowersRow, error) {
+	rows, err := q.db.QueryContext(ctx, getUserFollowers, followesID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetUserFollowersRow{}
+	for rows.Next() {
+		var i GetUserFollowersRow
+		if err := rows.Scan(&i.ID, &i.Username, &i.Email); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserFollowing = `-- name: GetUserFollowing :many
+SELECT
+  u.id,
+  u.username,
+  u.email
+FROM users u
+JOIN followers f ON u.id = f.followes_id
+WHERE f.follower_id = $1
+`
+
+type GetUserFollowingRow struct {
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+	Email    string    `json:"email"`
+}
+
+func (q *Queries) GetUserFollowing(ctx context.Context, followerID uuid.UUID) ([]GetUserFollowingRow, error) {
+	rows, err := q.db.QueryContext(ctx, getUserFollowing, followerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetUserFollowingRow{}
+	for rows.Next() {
+		var i GetUserFollowingRow
+		if err := rows.Scan(&i.ID, &i.Username, &i.Email); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

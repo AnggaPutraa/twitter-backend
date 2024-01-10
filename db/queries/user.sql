@@ -22,3 +22,34 @@ WHERE id = $1;
 SELECT *
 FROM users
 WHERE email = $1;
+
+-- name: GetUserFollowers :many
+SELECT 
+  u.id,
+  u.username,
+  u.email
+FROM users u
+JOIN followers f ON u.id = f.follower_id
+WHERE f.followes_id = $1;
+
+-- name: GetUserFollowing :many
+SELECT
+  u.id,
+  u.username,
+  u.email
+FROM users u
+JOIN followers f ON u.id = f.followes_id
+WHERE f.follower_id = $1;
+
+-- name: CreateUserFollowing :one
+INSERT INTO followers (
+  follower_id, 
+  followes_id
+) VALUES (
+  $1, 
+  $2
+) RETURNING *;
+
+-- name: DeleteUserFollowing :exec
+DELETE FROM followers
+WHERE follower_id = $1 AND followes_id = $2;

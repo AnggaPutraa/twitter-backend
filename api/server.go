@@ -32,7 +32,6 @@ func (server *Server) setupRouter() {
 	router.Use(responseInterceptor())
 
 	apiGroup := router.Group("/api")
-
 	apiGroup.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message": "pong",
@@ -49,9 +48,17 @@ func (server *Server) setupRouter() {
 	authenticatedRoute := apiGroup.Group("/", authMiddleware(server.strategy))
 	authenticatedRoute.Use()
 	{
+		userRoute := authenticatedRoute.Group("/user")
+		userRoute.POST("/following/:id", server.createNewFollowing)
+		userRoute.DELETE("/following/:id", server.deleteFollowing)
+		userRoute.POST("/following", server.deleteFollowing)
+		userRoute.GET("/following/:id", server.getAllUserFollowing)
+		userRoute.GET("/follower/:id", server.getAllUserFollowers)
+
 		postRoute := authenticatedRoute.Group("/post")
 		postRoute.POST("/", server.createPost)
 		postRoute.PUT("/:id", server.updatePost)
+
 		commentRoute := authenticatedRoute.Group("/comment")
 		commentRoute.POST("/", server.createComment)
 		commentRoute.PUT("/:id", server.updateComment)

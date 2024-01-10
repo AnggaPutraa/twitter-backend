@@ -15,12 +15,16 @@ type Querier interface {
 	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreateReplyComment(ctx context.Context, arg CreateReplyCommentParams) (Comment, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	CreateUserFollowing(ctx context.Context, arg CreateUserFollowingParams) (Follower, error)
+	DeleteUserFollowing(ctx context.Context, arg DeleteUserFollowingParams) error
 	GetAllPost(ctx context.Context) ([]Post, error)
 	GetCommentByPost(ctx context.Context, postID uuid.UUID) ([]Comment, error)
 	GetParentCommentByPost(ctx context.Context, postID uuid.UUID) ([]Comment, error)
 	GetPostById(ctx context.Context, id uuid.UUID) (Post, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserById(ctx context.Context, id uuid.UUID) (User, error)
+	GetUserFollowers(ctx context.Context, followesID uuid.UUID) ([]GetUserFollowersRow, error)
+	GetUserFollowing(ctx context.Context, followerID uuid.UUID) ([]GetUserFollowingRow, error)
 	UpdateComment(ctx context.Context, arg UpdateCommentParams) (Comment, error)
 	UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error)
 }
