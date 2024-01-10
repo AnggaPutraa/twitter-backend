@@ -31,3 +31,23 @@ INSERT INTO comments (
     $3, 
     $4
 )RETURNING *;
+
+-- name: GetParentCommentByPost :many
+SELECT
+  id,
+  body,
+  created_at,
+  updated_at,
+  user_id,
+  post_id,
+  parent_comment_id
+FROM
+  comments
+WHERE
+  post_id = $1 AND
+  parent_comment_id IS NULL;
+
+-- name: GetCommentByPost :many
+SELECT *
+FROM comments
+WHERE post_id = $1;

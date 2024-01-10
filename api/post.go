@@ -59,3 +59,49 @@ func (server *Server) updatePost(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, post)
 }
+
+func (server *Server) getPostById(ctx *gin.Context) {
+	var params dto.GetPostByIdParams
+	if err := ctx.ShouldBindUri(&params); err != nil {
+		ctx.JSON(http.StatusBadRequest, exceptions.ErrorResponse(err))
+		return
+	}
+	postId, err := uuid.Parse(params.Id)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, exceptions.ErrorResponse(err))
+		return
+	}
+	post, err := server.query.GetPostById(ctx, postId)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, exceptions.ErrorResponse(err))
+		return
+	}
+
+	comments, err := server.query.GetCommentByPost(ctx, post.ID)
+
+	var commentsOnPost []dto.CommentResponse
+
+	for _, comment := range comments {
+		if !comment.ParentCommentID.Valid {
+			commentResponse := dto.CommentResponse{
+				ID:      comment.ID,
+				Body:    comment.Body,
+				UserID:  comment.UserID,
+				PostID:  comment.PostID,
+				Replies: utils.GetRepliesOnComment(comments, comment.ID),
+			}
+			commentsOnPost = append(commentsOnPost, commentResponse)
+		}
+	}
+
+	response := dto.PostResponse{
+		ID:        postId,
+		Body:      post.Body,
+		CreatedAt: post.CreatedAt,
+		UpdatedAt: post.UpdatedAt,
+		UserID:    post.UserID,
+		Comments:  commentsOnPost,
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}

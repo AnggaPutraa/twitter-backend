@@ -85,6 +85,90 @@ func (q *Queries) CreateReplyComment(ctx context.Context, arg CreateReplyComment
 	return i, err
 }
 
+const getCommentByPost = `-- name: GetCommentByPost :many
+SELECT id, body, created_at, updated_at, user_id, post_id, parent_comment_id
+FROM comments
+WHERE post_id = $1
+`
+
+func (q *Queries) GetCommentByPost(ctx context.Context, postID uuid.UUID) ([]Comment, error) {
+	rows, err := q.db.QueryContext(ctx, getCommentByPost, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Comment{}
+	for rows.Next() {
+		var i Comment
+		if err := rows.Scan(
+			&i.ID,
+			&i.Body,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.UserID,
+			&i.PostID,
+			&i.ParentCommentID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getParentCommentByPost = `-- name: GetParentCommentByPost :many
+SELECT
+  id,
+  body,
+  created_at,
+  updated_at,
+  user_id,
+  post_id,
+  parent_comment_id
+FROM
+  comments
+WHERE
+  post_id = $1 AND
+  parent_comment_id IS NULL
+`
+
+func (q *Queries) GetParentCommentByPost(ctx context.Context, postID uuid.UUID) ([]Comment, error) {
+	rows, err := q.db.QueryContext(ctx, getParentCommentByPost, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Comment{}
+	for rows.Next() {
+		var i Comment
+		if err := rows.Scan(
+			&i.ID,
+			&i.Body,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.UserID,
+			&i.PostID,
+			&i.ParentCommentID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateComment = `-- name: UpdateComment :one
 UPDATE comments
 SET

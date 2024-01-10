@@ -43,6 +43,8 @@ func (server *Server) setupRouter() {
 	authRoute.POST("/register", server.register)
 	authRoute.POST("/login", server.login)
 
+	apiGroup.GET("/post/:id", server.getPostById)
+
 	authenticatedRoute := apiGroup.Group("/", authMiddleware(server.strategy))
 	authenticatedRoute.Use()
 	{
