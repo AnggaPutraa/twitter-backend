@@ -43,6 +43,7 @@ func (server *Server) setupRouter() {
 	authRoute.POST("/login", server.login)
 	authRoute.POST("/refresh", server.refresh)
 
+	apiGroup.GET("/user/all", server.getAllUser)
 	apiGroup.GET("/post", server.getAllPost)
 	apiGroup.GET("/post/:id", server.getPostById)
 

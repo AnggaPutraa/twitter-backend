@@ -11,6 +11,15 @@ import (
 	"github.com/google/uuid"
 )
 
+func (server *Server) getAllUser(ctx *gin.Context) {
+	users, err := server.query.GetAllUser(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, exceptions.ErrorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, users)
+}
+
 func (server *Server) createNewFollowing(ctx *gin.Context) {
 	var params dto.CreateUserFollowingByIdParams
 	if err := ctx.ShouldBindUri(&params); err != nil {

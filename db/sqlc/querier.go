@@ -18,6 +18,7 @@ type Querier interface {
 	CreateUserFollowing(ctx context.Context, arg CreateUserFollowingParams) (Follower, error)
 	DeleteUserFollowing(ctx context.Context, arg DeleteUserFollowingParams) error
 	GetAllPost(ctx context.Context) ([]Post, error)
+	GetAllUser(ctx context.Context) ([]GetAllUserRow, error)
 	GetCommentByPost(ctx context.Context, postID uuid.UUID) ([]Comment, error)
 	GetParentCommentByPost(ctx context.Context, postID uuid.UUID) ([]Comment, error)
 	GetPostById(ctx context.Context, id uuid.UUID) (Post, error)

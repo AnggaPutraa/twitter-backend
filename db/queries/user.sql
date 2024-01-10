@@ -18,6 +18,13 @@ SELECT *
 FROM users
 WHERE id = $1;
 
+-- name: GetAllUser :many
+SELECT
+  id,
+  username,
+  email
+FROM users;
+
 -- name: GetUserByEmail :one
 SELECT *
 FROM users

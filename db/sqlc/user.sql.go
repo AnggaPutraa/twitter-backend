@@ -95,6 +95,43 @@ func (q *Queries) DeleteUserFollowing(ctx context.Context, arg DeleteUserFollowi
 	return err
 }
 
+const getAllUser = `-- name: GetAllUser :many
+SELECT
+  id,
+  username,
+  email
+FROM users
+`
+
+type GetAllUserRow struct {
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+	Email    string    `json:"email"`
+}
+
+func (q *Queries) GetAllUser(ctx context.Context) ([]GetAllUserRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllUser)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetAllUserRow{}
+	for rows.Next() {
+		var i GetAllUserRow
+		if err := rows.Scan(&i.ID, &i.Username, &i.Email); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT id, name, username, email, hashed_password, bio, created_at, updated_at
 FROM users
