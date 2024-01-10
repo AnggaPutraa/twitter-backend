@@ -20,3 +20,7 @@ RETURNING *;
 SELECT *
 FROM posts
 WHERE id = $1;
+
+-- name: GetAllPost :many
+SELECT *
+FROM posts;

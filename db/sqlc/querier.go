@@ -15,6 +15,7 @@ type Querier interface {
 	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreateReplyComment(ctx context.Context, arg CreateReplyCommentParams) (Comment, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	GetAllPost(ctx context.Context) ([]Post, error)
 	GetCommentByPost(ctx context.Context, postID uuid.UUID) ([]Comment, error)
 	GetParentCommentByPost(ctx context.Context, postID uuid.UUID) ([]Comment, error)
 	GetPostById(ctx context.Context, id uuid.UUID) (Post, error)

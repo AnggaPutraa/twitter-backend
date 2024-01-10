@@ -39,6 +39,40 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 	return i, err
 }
 
+const getAllPost = `-- name: GetAllPost :many
+SELECT id, body, created_at, updated_at, user_id
+FROM posts
+`
+
+func (q *Queries) GetAllPost(ctx context.Context) ([]Post, error) {
+	rows, err := q.db.QueryContext(ctx, getAllPost)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Post{}
+	for rows.Next() {
+		var i Post
+		if err := rows.Scan(
+			&i.ID,
+			&i.Body,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.UserID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getPostById = `-- name: GetPostById :one
 SELECT id, body, created_at, updated_at, user_id
 FROM posts

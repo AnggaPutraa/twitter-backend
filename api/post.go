@@ -73,7 +73,7 @@ func (server *Server) getPostById(ctx *gin.Context) {
 	}
 	post, err := server.query.GetPostById(ctx, postId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, exceptions.ErrorResponse(err))
+		ctx.JSON(http.StatusNotFound, exceptions.ErrorResponse(err))
 		return
 	}
 
@@ -103,5 +103,14 @@ func (server *Server) getPostById(ctx *gin.Context) {
 		Comments:  commentsOnPost,
 	}
 
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (server *Server) getAllPost(ctx *gin.Context) {
+	response, err := server.query.GetAllPost(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, exceptions.ErrorResponse(err))
+		return
+	}
 	ctx.JSON(http.StatusOK, response)
 }
